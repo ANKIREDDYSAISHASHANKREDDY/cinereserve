@@ -643,13 +643,13 @@ app.post("/reset-db", async (req, res) => {
 // --- Serve Frontend ---
 // ✅ STATIC FILE SERVING FOR RENDER (Serve HTML, CSS, JS)
 // ✅ STATIC FILE SERVING FOR RENDER (Frontend outside backend folder)
-app.use("/html", express.static(path.join(__dirname, "../html")));
-app.use("/css", express.static(path.join(__dirname, "../css")));
-app.use("/js", express.static(path.join(__dirname, "../js")));
+// ✅ STATIC FILE SERVING FOR RENDER — Frontend root folder
+app.use(express.static(path.join(__dirname, "../")));
 
-app.get("*", (req, res) => {
-  res.sendFile(path.join(__dirname, "../html/index.html"));
-});
+app.get("/*", (_req, res) =>
+  res.sendFile(path.join(__dirname, "../", "index.html"))
+);
+
 
 
 // --- Start Server ---
