@@ -12,7 +12,8 @@ const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 const app = express();
-const PORT = 5000;
+const PORT = process.env.PORT || 5000;
+
 
 // --- Middleware ---
 app.use(express.json());
@@ -20,7 +21,7 @@ app.use(cors());
 
 // --- MongoDB Connection ---
 mongoose
-  .connect("mongodb://127.0.0.1:27017/cinebook_final_db")
+  .connect(process.env.MONGODB_URL)
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.error("MongoDB connection error:", err));
 
@@ -113,7 +114,7 @@ app.post("/signup", async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id, username: user.username, role: user.role },
-      "secretkey"
+      process.env.JWT_SECRET || "secretkey"
     );
 
     res.json({
@@ -138,7 +139,7 @@ app.post("/login", async (req, res) => {
 
     const token = jwt.sign(
       { userId: user._id, username: user.username, role: user.role },
-      "secretkey"
+      process.env.JWT_SECRET || "secretkey"
     );
 
     res.json({
@@ -159,7 +160,7 @@ app.get("/profile/:userId", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     const user = await User.findById(req.params.userId).select('-password');
     
     if (!user) return res.status(404).json({ error: "User not found" });
@@ -175,7 +176,7 @@ app.put("/profile/:userId", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.userId !== req.params.userId) {
       return res.status(403).json({ error: "Access denied" });
     }
@@ -200,7 +201,7 @@ app.get("/bookings/:userId", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     const bookings = await Booking.find({ user_id: req.params.userId })
       .sort({ booking_time: -1 })
       .limit(10);
@@ -255,7 +256,7 @@ app.post("/movies", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.role !== "admin")
       return res.status(403).json({ error: "Access denied" });
 
@@ -283,7 +284,7 @@ app.put("/movies/:id", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.role !== "admin")
       return res.status(403).json({ error: "Access denied" });
 
@@ -314,7 +315,7 @@ app.delete("/movies/:id", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.role !== "admin")
       return res.status(403).json({ error: "Access denied" });
 
@@ -332,7 +333,7 @@ app.put("/movies/:id/cast-crew", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.role !== "admin")
       return res.status(403).json({ error: "Access denied" });
 
@@ -375,7 +376,7 @@ app.post("/shows", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.role !== "admin")
       return res.status(403).json({ error: "Access denied" });
 
@@ -401,7 +402,7 @@ app.delete("/shows/:id", async (req, res) => {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
 
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
     if (decoded.role !== "admin")
       return res.status(403).json({ error: "Access denied" });
 
@@ -442,7 +443,7 @@ app.post("/book", async (req, res) => {
   try {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
 
     const { show_id, seats } = req.body;
     if (!show_id || !seats?.length)
@@ -492,7 +493,7 @@ app.get("/bookings/:user_id", async (req, res) => {
   try {
     const { token } = req.headers;
     if (!token) return res.status(401).json({ error: "Unauthorized" });
-    const decoded = jwt.verify(token, "secretkey");
+    const decoded = jwt.verify(token, process.env.JWT_SECRET || "secretkey");
 
     if (decoded.userId !== req.params.user_id)
       return res.status(403).json({ error: "Access denied" });
@@ -640,7 +641,16 @@ app.post("/reset-db", async (req, res) => {
 });
 
 // --- Serve Frontend ---
-app.use(express.static(path.join(__dirname, "../")));
+// ✅ STATIC FILE SERVING FOR RENDER (Serve HTML, CSS, JS)
+// ✅ STATIC FILE SERVING FOR RENDER (Frontend outside backend folder)
+app.use("/html", express.static(path.join(__dirname, "../html")));
+app.use("/css", express.static(path.join(__dirname, "../css")));
+app.use("/js", express.static(path.join(__dirname, "../js")));
+
+app.get("*", (req, res) => {
+  res.sendFile(path.join(__dirname, "../html/index.html"));
+});
+
 
 // --- Start Server ---
 app.listen(PORT, () =>
