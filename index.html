@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cinebook | Movie Booking</title>
+<link rel="stylesheet" href="style.css">
+<link rel="stylesheet" href="additional-styles.css">
+<link rel="stylesheet" href="profile-styles.css">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;700&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.13.2/gsap.min.js"></script>
+</head>
+<body>
+
+<div id="auth-container">
+    <div class="auth-left">
+        <div class="auth-branding">
+            <h1 class="auth-logo">Cinebook</h1>
+            <p class="auth-tagline">Your favorite movies, all in one place</p>
+        </div>
+    </div>
+    <div class="auth-right">
+        <div class="auth-box">
+            <h2 id="auth-title">Get Started</h2>
+            <p id="auth-error" class="error-message"></p>
+            <form id="auth-form">
+                <div class="input-group">
+                    <input type="text" id="username" placeholder="Username" required>
+                </div>
+                <div class="input-group hidden" id="email-group">
+                    <input type="email" id="email" placeholder="Email">
+                </div>
+                <div class="input-group">
+                    <input type="password" id="password" placeholder="Password" required>
+                </div>
+                <button type="submit" id="auth-button" class="auth-submit-btn">Continue</button>
+            </form>
+            <div class="auth-divider">
+                <span>OR</span>
+            </div>
+            <p id="auth-toggle" class="auth-toggle-text">
+                <span id="toggle-question">New to Cinebook?</span> 
+                <a id="toggle-link">Create an account</a>
+            </p>
+        </div>
+    </div>
+</div>
+
+<div id="main-container" class="hidden">
+    <header>
+        <div class="header-content">
+            <h1>Cinebook</h1>
+            <nav>
+                <a id="username-display"></a>
+                <a id="profile-button">👤 Profile</a>
+                <a id="logout-button">Logout</a>
+            </nav>
+        </div>
+    </header>
+
+    <main id="page-content"></main>
+
+    <!-- Admin Add Movie Modal -->
+    <div id="add-movie-modal" class="modal hidden">
+        <div class="modal-content">
+            <span id="close-modal" class="close">&times;</span>
+            <h2>Add New Movie</h2>
+            <form id="add-movie-form">
+                <input type="text" id="movie_name" placeholder="Movie Name" required>
+                <input type="text" id="poster_url" placeholder="Poster URL" required>
+                <input type="text" id="genre" placeholder="Genre">
+                <div class="form-field">
+                    <label for="release_date">Release Date</label>
+                    <input type="date" id="release_date" placeholder="Release Date">
+                </div>
+                <textarea id="description" placeholder="Description"></textarea>
+                <button type="submit">Add Movie</button>
+                <p id="add-movie-error" class="error-message"></p>
+            </form>
+        </div>
+    </div>
+
+    <footer>
+        <p>© 2025 Cinebook | Movie Booking Project</p>
+    </footer>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.2/gsap.min.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
