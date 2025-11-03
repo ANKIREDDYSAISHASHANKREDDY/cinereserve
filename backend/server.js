@@ -644,13 +644,13 @@ app.post("/reset-db", async (req, res) => {
 // ✅ STATIC FILE SERVING FOR RENDER (Serve HTML, CSS, JS)
 // ✅ STATIC FILE SERVING FOR RENDER (Frontend outside backend folder)
 // ✅ STATIC FILE SERVING FOR RENDER — Frontend root folder
+// ✅ Serve static frontend files (index.html, style.css, script.js)
 app.use(express.static(path.join(__dirname, "../")));
 
-app.get("/*", (_req, res) =>
-  res.sendFile(path.join(__dirname, "../", "index.html"))
+// ✅ Handle client-side routing for SPA (Fix for Node.js v22)
+app.get(/.*/, (_req, res) =>
+  res.sendFile(path.join(__dirname, "../index.html"))
 );
-
-
 
 // --- Start Server ---
 app.listen(PORT, () =>
