@@ -1,5 +1,5 @@
 // --- Global State ---
-const API_BASE = "http://localhost:5000";
+const API_BASE = "https://cinereserve-lvu3.onrender.com";
 let CURRENT_USER = null; // { userId, username, token, role }
 let SELECTED_SEATS = []; // Array of { seatId, price, category, label }
 let CURRENT_SHOW_ID = null;
